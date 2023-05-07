@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&display=swap" rel="stylesheet">
+
+    <meta charset="utf-8" />
+
+    <title>Integral calculator</title>
+
+    <style>
+        p{
+            font-family: Roboto, Arial;
+        }
+
+        .integral-box, .derivative-box{
+            display: inline-block;
+            width: 200px;
+            height: 200px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+            vertical-align: top;
+            margin-left: 12px;
+            margin-right: 12px;
+        }
+            .integral-box:hover, .derivative-box:hover {
+                box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+            }
+
+        .integral-input, .derivative-input{
+            width: 200px;
+            height: 120px;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.2)
+        }
+
+        .integral-output{
+            width: 300px;
+            height: 100px;
+        }
+
+        .upper_bound{
+            width: 26px;
+            margin-bottom: 72px;
+        }
+
+        .lower_bound{
+            width: 26px;
+        }
+
+        .integral-pic{
+            width: 36px;
+            display: inline-block;
+        }
+
+        .math_function{
+            width: 60px;
+        }
+        .math_function_d{
+            width:60px;
+        }
+
+        .x0_pos{
+            width: 48px;
+        }
+
+        .x0-input-div{
+            display: inline-block;
+            width: 60px;
+            vertical-align: top;
+            margin-top: 50px;
+        }
+
+        .bounds{
+            display: inline-block;
+            width: 26px;
+        }
+
+        .integral-picture-div{
+            display: inline-block;
+            width: 42px;
+            margin-left: 12px;
+            margin-right: 0px;
+        }
+        .derivative-picture-div{
+            display: inline-block;
+            width: 50px;
+            margin-left: 6px;
+        }
+
+        .derivative-pic{
+            width:48px;
+            margin-top: 24px;
+        }
+
+        .function-div{
+            display: inline-block;
+            width: 64px;
+            margin-top: 50px;
+            vertical-align: top;
+
+        }
+
+        .dx-div{
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 36px;
+            margin-left: 10px;
+        }
+
+        .compute-button{
+            font-family: Roboto, Arial;
+            font-size: 18px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            padding-left: 18px;
+            padding-right: 18px;
+            background-color: rgb(11, 169, 239);
+            border-radius: 9px;
+            margin-left: 12px;
+            margin-top: 12px;
+        }
+
+            .compute-button:hover {
+                background-color: rgba(11, 169, 239, 0.6);
+            }
+
+            .compute-button:active{
+                background-color: rgba(11, 169, 239, 0.4)
+            }
+
+    </style>
+</head>
+<body>
+    <script>
+        function initiliaze_integral_conditions(){
+            let a = Number(document.getElementById("lower_bound").value);
+            let b = Number(document.getElementById("upper_bound").value);
+            let func = new Function('x', 'return '+document.getElementById("math_function_i").value);
+            return integral_sum(a, b, func);
+        }
+
+        function initiliaze_derivative_conditions() {
+            let x0 = Number(document.getElementById("x0_d").value);
+            let func = new Function('x', 'return ' + document.getElementById("math_function_d").value);
+            return first_derivative(x0, func);
+        }
+
+
+        function integral_sum(lowerbound, upper_bound, f, n_intervals = 1000) {
+            let sum_total = 0;
+            let dx = (upper_bound - lowerbound) / (n_intervals);
+            for (let i = 0; i <= n_intervals; i++) {
+                sum_total += f(lowerbound + (dx * i)) * dx;
+
+            }
+            return sum_total;
+        }
+
+        function first_derivative(x0, f, h = 1e-9) {
+            return (f(x0 + h) - f(x0))/h
+        }
+    </script>
+
+    <div class="integral-box">
+        <div class="integral-input">
+            <div class="integral-picture-div">
+                <img src="integral.png" class="integral-pic" />
+            </div>
+            <div class="bounds">
+                <input type="text" id="upper_bound" class="upper_bound" placeholder="b" />
+                <input type="text" id="lower_bound" class="lower_bound" placeholder="a" />
+            </div>
+            <div class="function-div">
+                <input type="text" id="math_function_i" class="math_function" placeholder="f(x)" />
+            </div>
+            <div class="dx-div">
+                <p>
+                    dx
+                </p>
+            </div>
+        </div>
+        <div class="integral-output">
+            <button class="compute-button" onclick="
+    console.log(initiliaze_integral_conditions());
+    ">compute</button>
+        </div>
+    </div>
+
+    <div class="derivative-box">
+        <div class="derivative-input">
+            <div class="derivative-picture-div">
+                <img src="derivative.png" class="derivative-pic" />
+            </div>
+            <div class="x0-input-div">
+                <input type="text" id="x0_d" class="x0_pos" placeholder="(x0)"/>
+            </div>
+            <div class="function-div">
+                <input type="text" id="math_function_d" class="math_function_d" placeholder="f(x)" />
+            </div>
+        </div>
+        <div class="derivative-output">
+            <button class="compute-button" onclick="
+            console.log(initiliaze_derivative_conditions())
+    ">
+                compute
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>
