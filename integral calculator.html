@@ -16,10 +16,15 @@
             font-family: Roboto, Arial;
         }
 
+        .single-var-grid {
+            display: grid;
+            grid-template-columns: 225px 225px;
+            column-gap: 24px;
+        }
+
         .integral-box, .derivative-box{
-            display: inline-block;
-            width: 200px;
-            height: 200px;
+            display: grid;
+            grid-template-rows: 2fr 1fr;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
             vertical-align: top;
             margin-left: 12px;
@@ -30,35 +35,39 @@
             }
 
         .integral-input, .derivative-input{
-            width: 200px;
-            height: 120px;
-            box-shadow: 0 0 4px rgba(0, 0, 0, 0.2)
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr 1fr;
+            column-gap: 2px;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
         }
 
-        .integral-output{
-            width: 300px;
-            height: 100px;
+        .integral-picture-div {
+            width: 100%;
         }
 
-        .upper_bound{
-            width: 26px;
-            margin-bottom: 72px;
+        .bounds {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            row-gap: 72px;
         }
 
-        .lower_bound{
-            width: 26px;
+        .upper_bound, .lower_bound {
+            width: 100%;
         }
 
-        .integral-pic{
-            width: 36px;
-            display: inline-block;
+        .integral-output-grid, .derivative-output-grid{
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            column-gap: 6px;
+            align-items: flex-start;
         }
 
-        .math_function{
-            width: 60px;
+        .integral-pic, .math_function{
+            width: 100%;
         }
+
         .math_function_d{
-            width:60px;
+            width:100%;
         }
 
         .x0_pos{
@@ -72,10 +81,6 @@
             margin-top: 50px;
         }
 
-        .bounds{
-            display: inline-block;
-            width: 26px;
-        }
 
         .integral-picture-div{
             display: inline-block;
@@ -95,16 +100,11 @@
         }
 
         .function-div{
-            display: inline-block;
-            width: 64px;
             margin-top: 50px;
-            vertical-align: top;
 
         }
 
         .dx-div{
-            display: inline-block;
-            vertical-align: top;
             margin-top: 36px;
             margin-left: 10px;
         }
@@ -118,8 +118,9 @@
             padding-right: 18px;
             background-color: rgb(11, 169, 239);
             border-radius: 9px;
-            margin-left: 12px;
-            margin-top: 12px;
+            margin-top: 4px;
+            margin-left: 6px;
+            transition: background-color 0.15s;
         }
 
             .compute-button:hover {
@@ -130,25 +131,39 @@
                 background-color: rgba(11, 169, 239, 0.4)
             }
 
+
     </style>
 </head>
 <body>
     <script>
+        function initiliaze_input_function(funcString) {
+            funcString = funcString.replace(/sin/g, "Math.sin");
+            funcString = funcString.replace(/cos/g, "Math.cos");
+            funcString = funcString.replace(/tan/g, "Math.tan");
+            funcString = funcString.replace(/exp/g, "Math.exp");
+            funcString = funcString.replace(/log/g, "Math.log");
+            funcString = funcString.replace(/sqrt/g, "Math.sqrt");
+            funcString = funcString.replace(/\^/g, "**");
+            return funcString;
+        }
+
         function initiliaze_integral_conditions(){
             let a = Number(document.getElementById("lower_bound").value);
             let b = Number(document.getElementById("upper_bound").value);
-            let func = new Function('x', 'return '+document.getElementById("math_function_i").value);
-            return integral_sum(a, b, func);
+            let func = new Function('x', 'return ' + initiliaze_input_function(document.getElementById("math_function_i").value));
+            document.getElementById("integral-result").innerHTML = integral_sum(a, b, func).toFixed(3);
+            return 0;
         }
 
         function initiliaze_derivative_conditions() {
             let x0 = Number(document.getElementById("x0_d").value);
-            let func = new Function('x', 'return ' + document.getElementById("math_function_d").value);
-            return first_derivative(x0, func);
+            let func = new Function('x', 'return ' + initiliaze_input_function(document.getElementById("math_function_d").value));
+            document.getElementById("derivative-result").innerHTML = first_derivative(x0, func).toFixed(3);
+            return 0;
         }
 
 
-        function integral_sum(lowerbound, upper_bound, f, n_intervals = 1000) {
+        function integral_sum(lowerbound, upper_bound, f, n_intervals = 10000) {
             let sum_total = 0;
             let dx = (upper_bound - lowerbound) / (n_intervals);
             for (let i = 0; i <= n_intervals; i++) {
@@ -163,49 +178,59 @@
         }
     </script>
 
-    <div class="integral-box">
-        <div class="integral-input">
-            <div class="integral-picture-div">
-                <img src="integral.png" class="integral-pic" />
+    <div class="single-var-grid">
+        <div class="integral-box">
+            <div class="integral-input">
+                <div class="integral-picture-div">
+                    <img src="integral.png" class="integral-pic" />
+                </div>
+                <div class="bounds">
+                    <input type="text" id="upper_bound" class="upper_bound" placeholder="b" />
+                    <input type="text" id="lower_bound" class="lower_bound" placeholder="a" />
+                </div>
+                <div class="function-div">
+                    <input type="text" id="math_function_i" class="math_function" placeholder="f(x)" />
+                </div>
+                <div class="dx-div">
+                    <p>
+                        dx
+                    </p>
+                </div>
             </div>
-            <div class="bounds">
-                <input type="text" id="upper_bound" class="upper_bound" placeholder="b" />
-                <input type="text" id="lower_bound" class="lower_bound" placeholder="a" />
-            </div>
-            <div class="function-div">
-                <input type="text" id="math_function_i" class="math_function" placeholder="f(x)" />
-            </div>
-            <div class="dx-div">
-                <p>
-                    dx
-                </p>
-            </div>
-        </div>
-        <div class="integral-output">
-            <button class="compute-button" onclick="
-    console.log(initiliaze_integral_conditions());
-    ">compute</button>
-        </div>
-    </div>
-
-    <div class="derivative-box">
-        <div class="derivative-input">
-            <div class="derivative-picture-div">
-                <img src="derivative.png" class="derivative-pic" />
-            </div>
-            <div class="x0-input-div">
-                <input type="text" id="x0_d" class="x0_pos" placeholder="(x0)"/>
-            </div>
-            <div class="function-div">
-                <input type="text" id="math_function_d" class="math_function_d" placeholder="f(x)" />
-            </div>
-        </div>
-        <div class="derivative-output">
-            <button class="compute-button" onclick="
-            console.log(initiliaze_derivative_conditions())
+            <div class="integral-output-grid">
+                <button class="compute-button" onclick="
+    initiliaze_integral_conditions();
     ">
-                compute
-            </button>
+                    compute
+                </button>
+                <div style="border: 1px solid black; padding: 2px 2px 2px 2px; margin: 2px 2px 2px 2px; height: 80%; vertical-align: bottom;">
+                    <p id="integral-result" class="integral-result"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="derivative-box">
+            <div class="derivative-input">
+                <div class="derivative-picture-div">
+                    <img src="derivative.png" class="derivative-pic" />
+                </div>
+                <div class="x0-input-div">
+                    <input type="text" id="x0_d" class="x0_pos" placeholder="(x0)" />
+                </div>
+                <div class="function-div">
+                    <input type="text" id="math_function_d" class="math_function_d" placeholder="f(x)" />
+                </div>
+            </div>
+            <div class="derivative-output-grid">
+                <button class="compute-button" onclick="
+    initiliaze_derivative_conditions()
+    ">
+                    compute
+                </button>
+                <div style="border: 1px solid black; padding: 2px 2px 2px 2px; margin: 2px 2px 2px 2px; height: 80%; vertical-align: bottom;">
+                    <p id="derivative-result"></p>
+                </div>
+            </div>
         </div>
     </div>
 
